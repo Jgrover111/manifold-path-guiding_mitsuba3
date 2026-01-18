@@ -18,6 +18,7 @@ NAMESPACE_BEGIN(mitsuba)
 
 
 ManifoldPathGuidingConfig global_sms_config;
+int g_iter = 0;
 
 
 template <typename Float, typename Spectrum>

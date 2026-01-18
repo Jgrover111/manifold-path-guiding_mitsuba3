@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <map>
 #include <memory>
+#include <mitsuba/core/bbox.h>
 #include <mitsuba/core/distr_1d.h>
 #include <mitsuba/core/profiler.h>
 #include <mitsuba/core/progress.h>
@@ -37,6 +38,13 @@
 NAMESPACE_BEGIN(mitsuba)
 
 #define MAX_CHAIN_LENGTH 10
+
+// Forward declaration of config struct
+struct ManifoldPathGuidingConfig;
+
+// Global config variable (extern declaration)
+extern ManifoldPathGuidingConfig global_sms_config;
+extern int g_iter;
 
 void set_bit(int &tau, int n) { tau |= 1 << n; }
 

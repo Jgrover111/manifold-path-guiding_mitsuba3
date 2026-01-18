@@ -24,9 +24,6 @@ public:
     virtual void print_stats()                                                                            = 0;
 };
 
-int g_iter = 0;
-
-
 
 // ANN library
 template <typename Float, typename Spectrum> struct SpatialStructureANN : public SpatialStructure<Float, Spectrum> {
@@ -384,7 +381,7 @@ public:
                         tmp_samples.push_back(sample);
                     }
                 }
-                swap(children_samples[i], tmp_samples);
+                std::swap(children_samples[i], tmp_samples);
             }
             perf_after_filter_safe += children_samples[i].size();
             nodes[idx].distr->load_samples(children_samples[i]);
@@ -461,7 +458,7 @@ public:
     }
 
     bool shallSplit(const MySTreeNode &node, size_t samplesRequired) {
-        return m_nodes.size() < std::numeric_limits<uint32_t>::dr::max() - 1 &&
+        return m_nodes.size() < std::numeric_limits<uint32_t>::max() - 1 &&
                node.chainDistribution()->statisticalWeight() > samplesRequired;
     }
 
