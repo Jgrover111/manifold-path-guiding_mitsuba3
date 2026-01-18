@@ -1,5 +1,17 @@
 #pragma once
 
+// Suppress warnings about deprecated 'register' storage class in ANN library
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 5033)  // 'register' is no longer a supported storage class
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wregister"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wregister"
+#endif
+
 #include <cstring>
 #include <fstream>
 #include <iomanip>
@@ -5541,5 +5553,14 @@ DLL_API void annPrintStats( // print statistics for a run
     cout << "  )\n";
     cout.flush();
 }
+
+// Restore previous warning state
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 NAMESPACE_END(mitsuba)
