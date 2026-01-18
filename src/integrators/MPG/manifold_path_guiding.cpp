@@ -728,8 +728,8 @@ public:
                     }
                 }
 
-                this_iter_time = std::max(1, this_iter_time);
-                this_iter_spp  = std::max(1, this_iter_spp);
+                this_iter_time = std::max(1.0f, (float)this_iter_time);
+                this_iter_spp  = std::max(1, (int)this_iter_spp);
 
                 m_online_iteration                             = round_id;
                 g_iter                                         = m_online_iteration;
@@ -824,10 +824,10 @@ public:
 
                 if (!si.is_valid())
                     break;
-                si.compute_partials(ray);
+                // Note: compute_partials() removed in Mitsuba 3
 
-                if (depth > m_rr_depth) {
-                    Float q = dr::min(dr::hmax(unpolarized_spectrum(throughput)) * dr::square(eta), .95f);
+                if (depth > (int)m_rr_depth) {
+                    Float q = dr::minimum(dr::max(unpolarized_spectrum(throughput)) * dr::square(eta), .95f);
                     if (sampler->next_1d() > q)
                         break;
                     throughput *= dr::rcp(q);
@@ -874,7 +874,7 @@ public:
                 // The following codes are mostly from original SMS
                 // --------------------- Emitter sampling ---------------------
                 BSDFContext ctx;
-                ctx.sampler  = sampler;
+                // Note: ctx.sampler removed in Mitsuba 3
                 BSDFPtr bsdf = si.bsdf(ray);
                 if ((has_flag(bsdf->flags(), BSDFFlags::Smooth) && !on_caustic_caster) || still_perform_nee) {
 
@@ -897,7 +897,7 @@ public:
                 if (!has_flag(bs.sampled_type, BSDFFlags::Delta)) {
                     specular_camera_path = false;
                 }
-                if (dr::all(dr::eq(throughput, 0.f)))
+                if (dr::all(throughput == 0.f))
                     break;
 
                 ray                          = si.spawn_ray(si.to_world(bs.wo));
@@ -909,8 +909,8 @@ public:
                     if (!on_caustic_caster || (!specular_camera_path && still_perform_nee) ||
                         emitter->is_environment()) { // filter out glints
                         Spectrum emitter_val = emitter->eval(si_bsdf);
-                        DirectionSample3f ds(si_bsdf, si);
-                        ds.object         = emitter;
+                        DirectionSample3f ds(scene, si_bsdf, si);
+                        ds.emitter        = emitter;
                         Float emitter_pdf = dr::select(!has_flag(bs.sampled_type, BSDFFlags::Delta),
                                                    scene->pdf_emitter_direction(si, ds), 0.f);
                         Float mis         = mis_weight(bs.pdf, emitter_pdf);
