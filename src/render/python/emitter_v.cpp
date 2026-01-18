@@ -85,6 +85,8 @@ public:
     using Emitter::m_flags;
     using Emitter::m_needs_sample_2;
     using Emitter::m_needs_sample_3;
+    using Emitter::m_caustic_emitter_single;
+    using Emitter::m_caustic_emitter_multi;
 
     DR_TRAMPOLINE_TRAVERSE_CB(Emitter);
 };

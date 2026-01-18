@@ -627,7 +627,8 @@ public:
         delete subpath_sample_list_ext;
     }
 
-    bool render(Scene *scene, Sensor *sensor) override {
+    TensorXf render(Scene *scene, Sensor *sensor, UInt32 seed = 0, uint32_t spp = 0,
+                    bool develop = true, bool evaluate = true) override {
         // load cache data here
         Timer my_timer;
 
@@ -660,9 +661,9 @@ public:
             spatial_structure_ext->build(*subpath_sample_list_ext, m_sms_config.knn_k);
         }
 
-        bool result;
+        TensorXf result;
         if (m_sms_config.train_auto == false) {
-            result = MonteCarloIntegrator<Float, Spectrum>::render(scene, sensor);
+            result = MonteCarloIntegrator<Float, Spectrum>::render(scene, sensor, seed, spp, develop, evaluate);
         } else {
             float total_time = m_timeout;
             if (total_time < 0) {
@@ -751,8 +752,8 @@ public:
                         spatial_structure->build(*subpath_sample_list, m_sms_config.knn_k);
                     }
                 }
-                    
-                result = MonteCarloIntegrator<Float, Spectrum>::render(scene, sensor);
+
+                result = MonteCarloIntegrator<Float, Spectrum>::render(scene, sensor, seed, spp, develop, evaluate);
 
                 if (is_last_iter) {
                     break;
@@ -770,8 +771,8 @@ public:
     }
 
     void render_block(const Scene *scene, const Sensor *sensor, Sampler *sampler, ImageBlock *block, Float *aovs,
-                      size_t sample_count_) const override {
-        MonteCarloIntegrator<Float, Spectrum>::render_block(scene, sensor, sampler, block, aovs, sample_count_);
+                      uint32_t sample_count, UInt32 seed, uint32_t block_id, uint32_t block_size) const override {
+        MonteCarloIntegrator<Float, Spectrum>::render_block(scene, sensor, sampler, block, aovs, sample_count, seed, block_id, block_size);
 
         // Record samples for each block
         if (m_sms_config.train_auto && !m_online_last_iteration) {
