@@ -114,6 +114,12 @@ MI_PY_EXPORT(Scene) {
              D(Scene, sensors))
         .def("sensors_dr", &Scene::sensors_dr, D(Scene, sensors_dr))
         .def("emitters", nb::overload_cast<>(&Scene::emitters), D(Scene, emitters))
+        .def("caustic_emitters_single_scatter",
+             nb::overload_cast<>(&Scene::caustic_emitters_single_scatter),
+             D(Scene, caustic_emitters_single_scatter))
+        .def("caustic_emitters_multi_scatter",
+             nb::overload_cast<>(&Scene::caustic_emitters_multi_scatter),
+             D(Scene, caustic_emitters_multi_scatter))
         .def("emitters_dr", &Scene::emitters_dr, D(Scene, emitters_dr))
         .def_method(Scene, environment)
         .def("shapes",
@@ -129,6 +135,32 @@ MI_PY_EXPORT(Scene) {
                  return result;
              },
              D(Scene, shapes))
+        .def("caustic_casters_single_scatter",
+             [](const Scene &scene) {
+                 nb::list result;
+                 for (const Shape *s : scene.caustic_casters_single_scatter()) {
+                     const Mesh *m = dynamic_cast<const Mesh *>(s);
+                     if (m)
+                         result.append(nb::cast(m));
+                     else
+                         result.append(nb::cast(s));
+                 }
+                 return result;
+             },
+             D(Scene, caustic_casters_single_scatter))
+        .def("caustic_casters_multi_scatter",
+             [](const Scene &scene) {
+                 nb::list result;
+                 for (const Shape *s : scene.caustic_casters_multi_scatter()) {
+                     const Mesh *m = dynamic_cast<const Mesh *>(s);
+                     if (m)
+                         result.append(nb::cast(m));
+                     else
+                         result.append(nb::cast(s));
+                 }
+                 return result;
+             },
+             D(Scene, caustic_casters_multi_scatter))
         .def("shapes_dr", &Scene::shapes_dr, D(Scene, shapes_dr))
         .def("silhouette_shapes",
              [](const Scene &scene) {

@@ -60,6 +60,10 @@ MI_VARIANT Shape<Float, Spectrum>::Shape(const Properties &props)
     }
 
     m_silhouette_sampling_weight = props.get<ScalarFloat>("silhouette_sampling_weight", 1.0f);
+    m_caustic_receiver = props.get<bool>("caustic_receiver", false);
+    m_caustic_caster_single = props.get<bool>("caustic_caster_single", false);
+    m_caustic_caster_multi = props.get<bool>("caustic_caster_multi", false);
+    m_caustic_bouncer = props.get<bool>("caustic_bouncer", false);
 }
 
 MI_VARIANT Shape<Float, Spectrum>::~Shape() {

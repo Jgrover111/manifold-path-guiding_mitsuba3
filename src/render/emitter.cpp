@@ -7,10 +7,14 @@ NAMESPACE_BEGIN(mitsuba)
 
 MI_VARIANT Emitter<Float, Spectrum>::Emitter(const Properties &props) : Base(props, ObjectType::Emitter) {
     m_sampling_weight = props.get<ScalarFloat>("sampling_weight", 1.f);
+    m_caustic_emitter_single = props.get<bool>("caustic_emitter_single", false);
+    m_caustic_emitter_multi = props.get<bool>("caustic_emitter_multi", false);
 }
 
 MI_VARIANT void Emitter<Float, Spectrum>::traverse(TraversalCallback *cb) {
     cb->put("sampling_weight", m_sampling_weight, ParamFlags::NonDifferentiable);
+    cb->put("caustic_emitter_single", m_caustic_emitter_single, ParamFlags::NonDifferentiable);
+    cb->put("caustic_emitter_multi", m_caustic_emitter_multi, ParamFlags::NonDifferentiable);
 }
 
 MI_VARIANT void Emitter<Float, Spectrum>::parameters_changed(const std::vector<std::string> &keys) {

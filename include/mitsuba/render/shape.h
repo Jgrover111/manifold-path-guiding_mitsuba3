@@ -862,6 +862,18 @@ public:
     /// Is this shape an instance?
     bool is_instance() const { return shape_type() == +ShapeType::Instance; };
 
+    /// Is this shape a caustic receiver?
+    bool is_caustic_receiver() const { return m_caustic_receiver; }
+
+    /// Is this shape a (single-bounce) caustic caster for specular manifold sampling?
+    bool is_caustic_caster_single_scatter() const { return m_caustic_caster_single; }
+
+    /// Is this shape a (multi-bounce) caustic caster for specular manifold sampling?
+    bool is_caustic_caster_multi_scatter() const { return m_caustic_caster_multi; }
+
+    /// Is this shape a (multi-bounce) caustic bouncer (i.e. it can be an intermediate vertex of a longer chain)?
+    bool is_caustic_bouncer() const { return m_caustic_bouncer; }
+
     /// Does the surface of this shape mark a medium transition?
     bool is_medium_transition() const { return m_interior_medium.get() != nullptr ||
                                                m_exterior_medium.get() != nullptr; }
@@ -1062,6 +1074,11 @@ protected:
     /// True if the shape is used in a \c ShapeGroup
     bool m_is_instance = false;
 
+    bool m_caustic_receiver = false;
+    bool m_caustic_caster_single = false;
+    bool m_caustic_caster_multi = false;
+    bool m_caustic_bouncer = false;
+
 #if defined(MI_ENABLE_CUDA)
     /// OptiX hitgroup data buffer
     void* m_optix_data_ptr = nullptr;
@@ -1194,6 +1211,10 @@ DRJIT_CALL_TEMPLATE_BEGIN(mitsuba::Shape)
     DRJIT_CALL_GETTER(exterior_medium)
     DRJIT_CALL_GETTER(silhouette_discontinuity_types)
     DRJIT_CALL_GETTER(silhouette_sampling_weight)
+    DRJIT_CALL_GETTER(is_caustic_receiver)
+    DRJIT_CALL_GETTER(is_caustic_caster_single_scatter)
+    DRJIT_CALL_GETTER(is_caustic_caster_multi_scatter)
+    DRJIT_CALL_GETTER(is_caustic_bouncer)
     DRJIT_CALL_GETTER(has_flipped_normals)
     DRJIT_CALL_GETTER(shape_type)
     auto is_emitter() const { return emitter() != nullptr; }

@@ -3292,9 +3292,17 @@ static const char *__doc_mitsuba_Emitter_flags = R"doc(Flags for all components 
 
 static const char *__doc_mitsuba_Emitter_is_environment = R"doc(Is this an environment map light emitter?)doc";
 
+static const char *__doc_mitsuba_Emitter_is_caustic_emitter_single_scatter = R"doc(Is this emitter used for (single-bounce) specular manifold sampling?)doc";
+
+static const char *__doc_mitsuba_Emitter_is_caustic_emitter_multi_scatter = R"doc(Is this emitter used for (multi-bounce) specular manifold sampling?)doc";
+
 static const char *__doc_mitsuba_Emitter_m_dirty = R"doc(True if the emitter's parameters have changed)doc";
 
 static const char *__doc_mitsuba_Emitter_m_flags = R"doc(Combined flags for all properties of this emitter.)doc";
+
+static const char *__doc_mitsuba_Emitter_m_caustic_emitter_single = R"doc()doc";
+
+static const char *__doc_mitsuba_Emitter_m_caustic_emitter_multi = R"doc()doc";
 
 static const char *__doc_mitsuba_Emitter_m_sampling_weight = R"doc(Sampling weight)doc";
 
@@ -8192,6 +8200,18 @@ static const char *__doc_mitsuba_Scene_emitters = R"doc(Return the list of emitt
 
 static const char *__doc_mitsuba_Scene_emitters_2 = R"doc(Return the list of emitters (const version))doc";
 
+static const char *__doc_mitsuba_Scene_caustic_emitters_single_scatter =
+R"doc(Return the list of emitters that allow (single-bounce) specular manifold sampling)doc";
+
+static const char *__doc_mitsuba_Scene_caustic_emitters_single_scatter_2 =
+R"doc(Return the list of emitters that allow (single-bounce) specular manifold sampling (const version))doc";
+
+static const char *__doc_mitsuba_Scene_caustic_emitters_multi_scatter =
+R"doc(Return the list of emitters that allow (multi-bounce) specular manifold sampling)doc";
+
+static const char *__doc_mitsuba_Scene_caustic_emitters_multi_scatter_2 =
+R"doc(Return the list of emitters that allow (multi-bounce) specular manifold sampling (const version))doc";
+
 static const char *__doc_mitsuba_Scene_emitters_dr = R"doc(Return the list of emitters as a Dr.Jit array)doc";
 
 static const char *__doc_mitsuba_Scene_environment = R"doc(Return the environment emitter (if any))doc";
@@ -8829,6 +8849,18 @@ static const char *__doc_mitsuba_Scene_shapes = R"doc(Return the list of shapes)
 
 static const char *__doc_mitsuba_Scene_shapes_2 = R"doc(Return the list of shapes)doc";
 
+static const char *__doc_mitsuba_Scene_caustic_casters_single_scatter =
+R"doc(Return the list of shapes that allow (single-bounce) specular manifold sampling)doc";
+
+static const char *__doc_mitsuba_Scene_caustic_casters_single_scatter_2 =
+R"doc(Return the list of shapes that allow (single-bounce) specular manifold sampling (const version))doc";
+
+static const char *__doc_mitsuba_Scene_caustic_casters_multi_scatter =
+R"doc(Return the list of shapes that allow (multi-bounce) specular manifold sampling)doc";
+
+static const char *__doc_mitsuba_Scene_caustic_casters_multi_scatter_2 =
+R"doc(Return the list of shapes that allow (multi-bounce) specular manifold sampling (const version))doc";
+
 static const char *__doc_mitsuba_Scene_shapes_dr = R"doc(Return the list of shapes as a Dr.Jit array)doc";
 
 static const char *__doc_mitsuba_Scene_shapes_grad_enabled =
@@ -9417,6 +9449,17 @@ static const char *__doc_mitsuba_Shape_is_ellipsoids = R"doc(Is this shape a Sha
 static const char *__doc_mitsuba_Shape_is_emitter = R"doc(Is this shape also an area emitter?)doc";
 
 static const char *__doc_mitsuba_Shape_is_instance = R"doc(Is this shape an instance?)doc";
+
+static const char *__doc_mitsuba_Shape_is_caustic_receiver = R"doc(Is this shape a caustic receiver?)doc";
+
+static const char *__doc_mitsuba_Shape_is_caustic_caster_single_scatter =
+R"doc(Is this shape a (single-bounce) caustic caster for specular manifold sampling?)doc";
+
+static const char *__doc_mitsuba_Shape_is_caustic_caster_multi_scatter =
+R"doc(Is this shape a (multi-bounce) caustic caster for specular manifold sampling?)doc";
+
+static const char *__doc_mitsuba_Shape_is_caustic_bouncer =
+R"doc(Is this shape a (multi-bounce) caustic bouncer (i.e. it can be an intermediate vertex of a longer chain)?)doc";
 
 static const char *__doc_mitsuba_Shape_is_medium_transition = R"doc(Does the surface of this shape mark a medium transition?)doc";
 
@@ -14611,4 +14654,3 @@ static const char *__doc_operator_lshift = R"doc(Turns a vector of elements into
 #if defined(__GNUG__)
 #pragma GCC diagnostic pop
 #endif
-

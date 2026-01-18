@@ -89,6 +89,18 @@ template <typename Ptr, typename Cls> void bind_shape_generic(Cls &cls) {
             D(Shape, is_mesh))
        .def("is_ellipsoids", [](Ptr shape) { return shape->is_ellipsoids(); },
             D(Shape, is_ellipsoids))
+       .def("is_caustic_receiver",
+            [](Ptr shape) { return shape->is_caustic_receiver(); },
+            D(Shape, is_caustic_receiver))
+       .def("is_caustic_caster_single_scatter",
+            [](Ptr shape) { return shape->is_caustic_caster_single_scatter(); },
+            D(Shape, is_caustic_caster_single_scatter))
+       .def("is_caustic_caster_multi_scatter",
+            [](Ptr shape) { return shape->is_caustic_caster_multi_scatter(); },
+            D(Shape, is_caustic_caster_multi_scatter))
+       .def("is_caustic_bouncer",
+            [](Ptr shape) { return shape->is_caustic_bouncer(); },
+            D(Shape, is_caustic_bouncer))
        .def("is_medium_transition",
             [](Ptr shape) { return shape->is_medium_transition(); },
             D(Shape, is_medium_transition))
