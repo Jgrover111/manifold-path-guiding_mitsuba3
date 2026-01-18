@@ -119,7 +119,7 @@ template <typename Float_, typename Spectrum_> struct ManifoldVertex {
 
         // Encode conductors with eta=1.0, and dielectrics with their relative
         // IOR
-        Complex<Spectrum> ior = si.bsdf()->ior(si);
+        dr::Complex<Spectrum> ior = si.bsdf()->ior(si);
         eta                   = dr::select(dr::all(dr::eq(0.f, dr::imag(ior))), harmonic_mean(dr::real(ior)),
                                        1.f); // Assumption here is that real (dielectric) IOR is
                                              // not spectrally varying.
@@ -494,7 +494,7 @@ template <typename Float_, typename Spectrum_> struct SpecularManifold {
                 }
             }
 
-            Complex<Spectrum> ior = si.bsdf()->ior(si);
+            dr::Complex<Spectrum> ior = si.bsdf()->ior(si);
             Mask reflection       = dr::any(dr::neq(0.f, dr::imag(ior)));
             reflection            = v[k].is_refract == false;
 

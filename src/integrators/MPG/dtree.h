@@ -200,7 +200,9 @@ public:
     }
 
 private:
-    std::array<std::atomic<Float>, 4> m_sum;
+    // Use scalar float for atomics since this integrator only supports scalar mode
+    using ScalarFloat = std::conditional_t<dr::is_array_v<Float>, float, Float>;
+    std::array<std::atomic<ScalarFloat>, 4> m_sum;
     std::array<uint16_t, 4> m_children;
 };
 
@@ -361,8 +363,10 @@ private:
             return *this;
         }
 
-        std::atomic<Float> sum;
-        std::atomic<Float> statisticalWeight;
+        // Use scalar float for atomics since this integrator only supports scalar mode
+        using ScalarFloat = std::conditional_t<dr::is_array_v<Float>, float, Float>;
+        std::atomic<ScalarFloat> sum;
+        std::atomic<ScalarFloat> statisticalWeight;
 
     } m_atomic;
 

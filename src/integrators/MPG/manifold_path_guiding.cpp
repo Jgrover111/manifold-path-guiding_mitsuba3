@@ -205,7 +205,7 @@ public:
                     // Fresnel type sampling
                     auto avg              = [&](Spectrum s) { return (s[0] + s[1] + s[2]) / 3; };
                     const BSDFPtr bsdf    = si_.bsdf();
-                    Complex<Spectrum> ior = si_.bsdf()->ior(si_);
+                    dr::Complex<Spectrum> ior = si_.bsdf()->ior(si_);
                     Spectrum f;
                     Frame3f frame   = bsdf->frame(si, 0.f);
                     Float cos_theta = dr::dot(frame.n, wi);
@@ -309,7 +309,7 @@ public:
                     for (int _ = 0; _ < repeat_bernoulli; _++) {
                         inv_prob_estimate += 1;
                         while (true) {
-                            ScopedPhase scope_phase(ProfilerPhase::SMSCausticsBernoulliTrials);
+                            // ScopedPhase scope_phase(ProfilerPhase::SMSCausticsBernoulliTrials); // Custom profiler phase not available in Mitsuba 3
                             bool success_trial = sample_path(si, ei, sampler);
 
                             if (success_trial) {
@@ -420,7 +420,7 @@ public:
                 } else {
                     auto avg              = [&](Spectrum s) { return (s[0] + s[1] + s[2]) / 3; };
                     const BSDFPtr bsdf    = si_.bsdf();
-                    Complex<Spectrum> ior = si_.bsdf()->ior(si_);
+                    dr::Complex<Spectrum> ior = si_.bsdf()->ior(si_);
                     Spectrum f;
                     Frame3f frame   = bsdf->frame(si, 0.f);
                     Float cos_theta = dr::dot(frame.n, wi);
@@ -643,17 +643,19 @@ public:
             std::string line;
             while (std::getline(in, line)) {
                 std::stringstream ss(line);
-                Point3f xD   = 0;
-                Point3f xL   = 0;
-                Point3f x1   = 0;
-                Float energy = 0;
+                // Read into scalar floats first to avoid issues with DrJit arrays
+                float xD0, xD1, xD2, xL0, xL1, xL2, x10, x11, x12;
+                float energy_f;
                 int bounce   = 0;
                 int tau      = -1;
-                float t;
-                ss >> xD[0] >> xD[1] >> xD[2] >>
-                    xL[0] >> xL[1] >> xL[2] >>
-                    x1[0] >> x1[1] >> x1[2] >>
-                    energy >> bounce;
+                ss >> xD0 >> xD1 >> xD2 >>
+                    xL0 >> xL1 >> xL2 >>
+                    x10 >> x11 >> x12 >>
+                    energy_f >> bounce;
+                Point3f xD = Point3f(xD0, xD1, xD2);
+                Point3f xL = Point3f(xL0, xL1, xL2);
+                Point3f x1 = Point3f(x10, x11, x12);
+                Float energy = energy_f;
                 SubpathSample input_cache = { xD, xL, x1, energy, bounce, tau };
                 subpath_sample_list_ext->push_back(input_cache);
             }
@@ -665,11 +667,11 @@ public:
         if (m_sms_config.train_auto == false) {
             result = MonteCarloIntegrator<Float, Spectrum>::render(scene, sensor, seed, spp, develop, evaluate);
         } else {
-            float total_time = m_timeout;
+            float total_time = Base::m_timeout;
             if (total_time < 0) {
                 total_time = 1e9;
             }
-            float total_spp = scene->sensors()[0]->sampler()->m_sample_count;
+            float total_spp = scene->sensors()[0]->sampler()->sample_count();
             int round_id = 0;
             int used_spp = 0;
 
@@ -731,8 +733,8 @@ public:
                 m_online_iteration                             = round_id;
                 g_iter                                         = m_online_iteration;
                 m_online_last_iteration                        = is_last_iter;
-                scene->sensors()[0]->sampler()->m_sample_count = this_iter_spp;
-                m_timeout                                      = this_iter_time;
+                scene->sensors()[0]->sampler()->set_sample_count(this_iter_spp);
+                Base::m_timeout                                = this_iter_time;
                 used_spp += this_iter_spp;
 
                 if (need_rebuild || is_last_iter) {
@@ -792,7 +794,7 @@ public:
         MI_MASKED_FUNCTION(ProfilerPhase::SamplingIntegratorSample, active);
 
         GuidedManifoldSampler &mf = (GuidedManifoldSampler &) thread_mf;
-        if constexpr (is_array_v<Float>) {
+        if constexpr (dr::is_array_v<Float>) {
             Throw("This integrator does not support vector/gpu/autodiff modes!");
             return { 0.f, 0.f };
         } else {
