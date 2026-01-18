@@ -28,6 +28,8 @@ MI_VARIANT Mesh<Float, Spectrum>::Mesh(const Properties &props) : Base(props) {
        appearance. Default: ``false`` */
     m_face_normals = props.get<bool>("face_normals", false);
     m_flip_normals = props.get<bool>("flip_normals", false);
+    m_use_default_uv_parameterization =
+        props.get<bool>("use_default_uv_parameterization", true);
 
     m_discontinuity_types = (uint32_t) DiscontinuityFlags::PerimeterType;
 
@@ -1577,16 +1579,24 @@ Mesh<Float, Spectrum>::compute_surface_interaction(const Ray3f &ray,
     Vector3f dp0 = p1 - p0,
              dp1 = p2 - p0;
 
-    if (has_vertex_texcoords() &&
+    if ((has_vertex_texcoords() || m_use_default_uv_parameterization) &&
         likely(has_flag(ray_flags, RayFlags::UV) ||
                has_flag(ray_flags, RayFlags::dPdUV))) {
-        Point2f uv0 = vertex_texcoord(fi[0], active),
-                uv1 = vertex_texcoord(fi[1], active),
-                uv2 = vertex_texcoord(fi[2], active);
-        if (IsDiff && has_flag(ray_flags, RayFlags::DetachShape)) {
-            uv0 = dr::detach<true>(uv0);
-            uv1 = dr::detach<true>(uv1);
-            uv2 = dr::detach<true>(uv2);
+        Point2f uv0, uv1, uv2;
+        if (has_vertex_texcoords()) {
+            uv0 = vertex_texcoord(fi[0], active);
+            uv1 = vertex_texcoord(fi[1], active);
+            uv2 = vertex_texcoord(fi[2], active);
+
+            if (IsDiff && has_flag(ray_flags, RayFlags::DetachShape)) {
+                uv0 = dr::detach<true>(uv0);
+                uv1 = dr::detach<true>(uv1);
+                uv2 = dr::detach<true>(uv2);
+            }
+        } else {
+            uv0 = Point2f(0.f, 0.f);
+            uv1 = Point2f(1.f, 0.f);
+            uv2 = Point2f(0.f, 1.f);
         }
 
         si.uv = dr::fmadd(uv2, b2, dr::fmadd(uv1, b1, uv0 * b0));

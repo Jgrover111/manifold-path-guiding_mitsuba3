@@ -61,6 +61,12 @@ public:
                !has_flag(m_flags, EmitterFlags::Delta);
     }
 
+    /// Is this emitter used for (single-bounce) specular manifold sampling?
+    bool is_caustic_emitter_single_scatter() const { return m_caustic_emitter_single; }
+
+    /// Is this emitter used for (multi-bounce) specular manifold sampling?
+    bool is_caustic_emitter_multi_scatter() const { return m_caustic_emitter_multi; }
+
     /// The emitter's sampling weight.
     ScalarFloat sampling_weight() const { return m_sampling_weight; }
 
@@ -90,6 +96,9 @@ protected:
     /// Sampling weight
     ScalarFloat m_sampling_weight;
 
+    bool m_caustic_emitter_single = false;
+    bool m_caustic_emitter_multi = false;
+
     /// True if the emitter's parameters have changed
     bool m_dirty = false;
 
@@ -113,6 +122,8 @@ DRJIT_CALL_TEMPLATE_BEGIN(mitsuba::Emitter)
     DRJIT_CALL_METHOD(eval)
     DRJIT_CALL_METHOD(sample_wavelengths)
     DRJIT_CALL_GETTER(is_environment)
+    DRJIT_CALL_GETTER(is_caustic_emitter_single_scatter)
+    DRJIT_CALL_GETTER(is_caustic_emitter_multi_scatter)
     DRJIT_CALL_GETTER(flags)
     DRJIT_CALL_GETTER(shape)
     DRJIT_CALL_GETTER(medium)

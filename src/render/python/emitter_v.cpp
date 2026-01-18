@@ -147,7 +147,13 @@ template <typename Ptr, typename Cls> void bind_emitter_generic(Cls &cls) {
     .def("get_shape", [](Ptr ptr) -> RetShape { return ptr->shape(); }, D(Endpoint, shape))
     .def("get_medium", [](Ptr ptr) -> RetMedium { return ptr->medium(); }, D(Endpoint, medium))
     .def("sampling_weight", [](Ptr ptr) { return ptr->sampling_weight(); }, D(Emitter, sampling_weight))
-    .def("is_environment", [](Ptr ptr) { return ptr->is_environment(); }, D(Emitter, is_environment));
+    .def("is_environment", [](Ptr ptr) { return ptr->is_environment(); }, D(Emitter, is_environment))
+    .def("is_caustic_emitter_single_scatter",
+         [](Ptr ptr) { return ptr->is_caustic_emitter_single_scatter(); },
+         D(Emitter, is_caustic_emitter_single_scatter))
+    .def("is_caustic_emitter_multi_scatter",
+         [](Ptr ptr) { return ptr->is_caustic_emitter_multi_scatter(); },
+         D(Emitter, is_caustic_emitter_multi_scatter));
 }
 
 MI_PY_EXPORT(Emitter) {
@@ -161,11 +167,15 @@ MI_PY_EXPORT(Emitter) {
     auto emitter = MI_PY_TRAMPOLINE_CLASS(PyEmitter, Emitter, Endpoint)
         .def(nb::init<const Properties&>(), "props"_a)
         .def_method(Emitter, is_environment)
+        .def_method(Emitter, is_caustic_emitter_single_scatter)
+        .def_method(Emitter, is_caustic_emitter_multi_scatter)
         .def_method(Emitter, sampling_weight)
         .def_method(Emitter, flags, "active"_a = true)
         .def_field(PyEmitter, m_needs_sample_2, D(Endpoint, m_needs_sample_2))
         .def_field(PyEmitter, m_needs_sample_3, D(Endpoint, m_needs_sample_3))
-        .def_field(PyEmitter, m_flags, D(Emitter, m_flags));
+        .def_field(PyEmitter, m_flags, D(Emitter, m_flags))
+        .def_field(PyEmitter, m_caustic_emitter_single, D(Emitter, m_caustic_emitter_single))
+        .def_field(PyEmitter, m_caustic_emitter_multi, D(Emitter, m_caustic_emitter_multi));
 
     drjit::bind_traverse(emitter);
 

@@ -701,6 +701,16 @@ public:
     /// Return the list of emitters (const version)
     const std::vector<ref<Emitter>> &emitters() const { return m_emitters; }
 
+    /// Return the list of emitters that allow (single-bounce) specular manifold sampling
+    std::vector<ref<Emitter>> &caustic_emitters_single_scatter() { return m_caustic_emitters_single; }
+    /// Return the list of emitters that allow (single-bounce) specular manifold sampling (const version)
+    const std::vector<ref<Emitter>> &caustic_emitters_single_scatter() const { return m_caustic_emitters_single; }
+
+    /// Return the list of emitters that allow (multi-bounce) specular manifold sampling
+    std::vector<ref<Emitter>> &caustic_emitters_multi_scatter() { return m_caustic_emitters_multi; }
+    /// Return the list of emitters that allow (multi-bounce) specular manifold sampling (const version)
+    const std::vector<ref<Emitter>> &caustic_emitters_multi_scatter() const { return m_caustic_emitters_multi; }
+
     /// Return the environment emitter (if any)
     const Emitter *environment() const { return m_environment.get(); }
 
@@ -708,6 +718,16 @@ public:
     std::vector<ref<Shape>> &shapes() { return m_shapes; }
     /// Return the list of shapes
     const std::vector<ref<Shape>> &shapes() const { return m_shapes; }
+
+    /// Return the list of shapes that allow (single-bounce) specular manifold sampling
+    std::vector<ref<Shape>> &caustic_casters_single_scatter() { return m_caustic_casters_single; }
+    /// Return the list of shapes that allow (single-bounce) specular manifold sampling (const version)
+    const std::vector<ref<Shape>> &caustic_casters_single_scatter() const { return m_caustic_casters_single; }
+
+    /// Return the list of shapes that allow (multi-bounce) specular manifold sampling
+    std::vector<ref<Shape>> &caustic_casters_multi_scatter() { return m_caustic_casters_multi; }
+    /// Return the list of shapes that allow (multi-bounce) specular manifold sampling (const version)
+    const std::vector<ref<Shape>> &caustic_casters_multi_scatter() const { return m_caustic_casters_multi; }
 
     /// Return the list of shapes that can have their silhouette sampled
     const std::vector<ref<Shape>> &silhouette_shapes() const { return m_silhouette_shapes; }
@@ -811,9 +831,13 @@ protected:
     ScalarBoundingBox3f m_bbox;
 
     std::vector<ref<Emitter>> m_emitters;
+    std::vector<ref<Emitter>> m_caustic_emitters_single;
+    std::vector<ref<Emitter>> m_caustic_emitters_multi;
     DynamicBuffer<EmitterPtr> m_emitters_dr;
 
     std::vector<ref<Shape>> m_shapes;
+    std::vector<ref<Shape>> m_caustic_casters_single;
+    std::vector<ref<Shape>> m_caustic_casters_multi;
     DynamicBuffer<ShapePtr> m_shapes_dr;
     std::vector<ref<ShapeGroup>> m_shapegroups;
 
